@@ -91,7 +91,7 @@ class BraitenbergNode(DTROS):
         self.log("Initialized")
         
         self.sub = rospy.Subscriber('image', CompressedImage, queue_size=10)
-        self.pub = rospy.Publisher('wheel_cmd', WheelsCmdStamped, queue_size=10)
+        self.pub = rospy.Publisher('/'+self.veh_name+'/wheels_driver_node/wheels_cmd', WheelsCmdStamped, queue_size=10)
 
     def speedToCmd(self, speed_l, speed_r):
         """Applies the robot-specific gain and trim to the
@@ -225,13 +225,17 @@ class BraitenbergNode(DTROS):
             speed_l = 5.0
             speed_u = 0.0
             ul, ur = camera_node.speedToCmd(speed_l, speed_u)
-            self.log("Speed set")
+            self.log("------------------------")
             message = WheelsCmdStamped()
             message.header.stamp = t
             message.vel_right = ur
             message.vel_left = ul
+            self.log("Right:")
+            self.log(ur)
+            self.log("Left:")
+            self.log(ul)
             self.pub.publish(message)
-            self.log("Speed Published")
+            self.log("-----------------------")
             # ul, ur = camera_node.speedToCmd(speed_l, speed_u)
             rate.sleep()
             t+=1
